@@ -7,31 +7,31 @@
 #undef DEBUG
 
 
-/* 模拟辅存的文件路径 */
+/* ģ�⸨����ļ�·�� */
 #define AUXILIARY_MEMORY "vmm_auxMem"
 
-/* 页面大小（字节）*/
+/* ҳ���С���ֽڣ�*/
 #define PAGE_SIZE 4
-/* 虚存空间大小（字节） */
+/* ���ռ��С���ֽڣ� */
 #define VIRTUAL_MEMORY_SIZE (64 * 4)
-/* 实存空间大小（字节） */ 
+/* ʵ��ռ��С���ֽڣ� */
 #define ACTUAL_MEMORY_SIZE (32 * 4)
-/* 总虚页数 */
+/* ����ҳ�� */
 #define PAGE_SUM (VIRTUAL_MEMORY_SIZE / PAGE_SIZE)
-/* 总物理块数 */
+/* ���������� */
 #define BLOCK_SUM (ACTUAL_MEMORY_SIZE / PAGE_SIZE)
 
 
-/* 可读标识位 */
+/* �ɶ���ʶλ */
 #define READABLE 0x01u
-/* 可写标识位 */
+/* ��д��ʶλ */
 #define WRITABLE 0x02u
-/* 可执行标识位 */
+/* ��ִ�б�ʶλ */
 #define EXECUTABLE 0x04u
 
 
 
-/* 定义字节类型 */
+/* �����ֽ����� */
 #define BYTE unsigned char
 
 typedef enum {
@@ -40,73 +40,73 @@ typedef enum {
 
 
 
-/* 页表项 */
+/* ҳ���� */
 typedef struct
 {
 	unsigned int pageNum;
-	unsigned int blockNum; //物理块号
-	BOOL filled; //页面装入特征位
-	BYTE proType; //页面保护类型
-	BOOL edited; //页面修改标识
-	unsigned long auxAddr; //外存地址
-	unsigned long count; //页面使用计数器
+	unsigned int blockNum; //�������
+	BOOL filled; //ҳ��װ������λ
+	BYTE proType; //ҳ�汣������
+	BOOL edited; //ҳ���޸ı�ʶ
+	unsigned long auxAddr; //����ַ
+	unsigned long count; //ҳ��ʹ�ü�����
 } PageTableItem, *Ptr_PageTableItem;
 
-/* 访存请求类型 */
-typedef enum { 
-	REQUEST_READ, 
-	REQUEST_WRITE, 
-	REQUEST_EXECUTE 
+/* �ô��������� */
+typedef enum {
+	REQUEST_READ,
+	REQUEST_WRITE,
+	REQUEST_EXECUTE
 } MemoryAccessRequestType;
 
-/* 访存请求 */
+/* �ô����� */
 typedef struct
 {
-	MemoryAccessRequestType reqType; //访存请求类型
-	unsigned long virAddr; //虚地址
-	BYTE value; //写请求的值
+	MemoryAccessRequestType reqType; //�ô���������
+	unsigned long virAddr; //���ַ
+	BYTE value; //д�����ֵ
 } MemoryAccessRequest, *Ptr_MemoryAccessRequest;
 
 
-/* 访存错误代码 */
+/* �ô������� */
 typedef enum {
-	ERROR_READ_DENY, //该页不可读
-	ERROR_WRITE_DENY, //该页不可写
-	ERROR_EXECUTE_DENY, //该页不可执行
-	ERROR_INVALID_REQUEST, //非法请求类型
-	ERROR_OVER_BOUNDARY, //地址越界
-	ERROR_FILE_OPEN_FAILED, //文件打开失败
-	ERROR_FILE_CLOSE_FAILED, //文件关闭失败
-	ERROR_FILE_SEEK_FAILED, //文件指针定位失败
-	ERROR_FILE_READ_FAILED, //文件读取失败
-	ERROR_FILE_WRITE_FAILED //文件写入失败
+	ERROR_READ_DENY, //��ҳ���ɶ�
+	ERROR_WRITE_DENY, //��ҳ����д
+	ERROR_EXECUTE_DENY, //��ҳ����ִ��
+	ERROR_INVALID_REQUEST, //�Ƿ���������
+	ERROR_OVER_BOUNDARY, //��ַԽ��
+	ERROR_FILE_OPEN_FAILED, //�ļ���ʧ��
+	ERROR_FILE_CLOSE_FAILED, //�ļ��ر�ʧ��
+	ERROR_FILE_SEEK_FAILED, //�ļ�ָ�붨λʧ��
+	ERROR_FILE_READ_FAILED, //�ļ���ȡʧ��
+	ERROR_FILE_WRITE_FAILED //�ļ�д��ʧ��
 } ERROR_CODE;
 
-/* 产生访存请求 */
+/* �����ô����� */
 void do_request();
 
-/* 响应访存请求 */
+/* ��Ӧ�ô����� */
 void do_response();
 
-/* 处理缺页中断 */
+/* ����ȱҳ�ж� */
 void do_page_fault(Ptr_PageTableItem);
 
-/* LFU页面替换 */
+/* LFUҳ���滻 */
 void do_LFU(Ptr_PageTableItem);
 
-/* 装入页面 */
+/* װ��ҳ�� */
 void do_page_in(Ptr_PageTableItem, unsigned in);
 
-/* 写出页面 */
+/* д��ҳ�� */
 void do_page_out(Ptr_PageTableItem);
 
-/* 错误处理 */
+/* ������ */
 void do_error(ERROR_CODE);
 
-/* 打印页表相关信息 */
+/* ��ӡҳ�������Ϣ */
 void do_print_info();
 
-/* 获取页面保护类型字符串 */
+/* ��ȡҳ�汣�������ַ��� */
 char *get_proType_str(char *, BYTE);
 
 
