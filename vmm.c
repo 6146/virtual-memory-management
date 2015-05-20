@@ -446,7 +446,54 @@ int main(int argc, char* argv[])
 	/* 在循环中模拟访存请求与处理过程 */
 	while (TRUE)
 	{
-		do_request();
+	    int i;
+	    printf("输入1手动输入请求，输入2自动生成请求\n");
+	    scanf("%d",&i);
+	    if(i==1)
+        {
+            printf("请输入请求地址:");
+            int address;
+            scanf("%d",&address);
+            ptr_memAccReq->virAddr = address % VIRTUAL_MEMORY_SIZE;
+            printf("请输入请求类型:");
+            int type;
+            scanf("%d",&type);
+        switch (type % 3)
+	{
+		case 0: //读请求
+		{
+			ptr_memAccReq->reqType = REQUEST_READ;
+			printf("产生请求：\n地址：%u\t类型：读取\n", ptr_memAccReq->virAddr);
+			break;
+		}
+		case 1: //写请求
+		{
+			ptr_memAccReq->reqType = REQUEST_WRITE;
+			printf("请输入待写入的值:");
+			int key;
+			scanf("%d",&key);
+			ptr_memAccReq->value = key % 0xFFu;
+			printf("产生请求：\n地址：%u\t类型：写入\t值：%02X\n", ptr_memAccReq->virAddr, ptr_memAccReq->value);
+			break;
+		}
+		case 2:
+		{
+			ptr_memAccReq->reqType = REQUEST_EXECUTE;
+			printf("产生请求：\n地址：%u\t类型：执行\n", ptr_memAccReq->virAddr);
+			break;
+		}
+		default:
+			break;
+	}
+            //do_request();
+        }
+		else if(i==2)
+            do_request();
+        else
+           {
+            printf("输入错误");
+            return 0;
+           }
 		do_response();
 		printf("按Y打印页表，按其他键不打印...\n");
 		if ((c = getchar()) == 'y' || c == 'Y')
