@@ -34,6 +34,10 @@
 /* 定义字节类型 */
 #define BYTE unsigned char
 
+typedef struct{
+    char c;
+    MemoryAccessRequest
+}
 typedef enum {
 	TRUE = 1, FALSE = 0
 } BOOL;
