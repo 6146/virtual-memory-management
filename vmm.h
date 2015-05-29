@@ -47,6 +47,7 @@ typedef struct{
 /* 页表项 */
 typedef struct
 {
+    unsigned int proccessNum;//进程号
 	unsigned int pageNum;//页号
 	unsigned int blockNum; //物理块号
 	BOOL filled; //页面装入特征位
@@ -66,6 +67,7 @@ typedef enum {
 /* 访存请求 */
 typedef struct
 {
+    unsigned int proccessNum;//进程号
 	MemoryAccessRequestType reqType; //访存请求类型
 	unsigned long virAddr; //虚地址
 	BYTE value; //写请求的值

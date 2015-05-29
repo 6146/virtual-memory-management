@@ -30,22 +30,22 @@ void do_init()
                 {
                 case 0:
                     {
-                        outerpageTable[k].pageIndex = 128;
+                        outerpageTable[k].pageIndex = 0;
                         break;
                     }
                 case 1:
                     {
-                        outerpageTable[k].pageIndex = 0;
+                        outerpageTable[k].pageIndex = 64;
                         break;
                     }
                 case 2:
                     {
-                        outerpageTable[k].pageIndex = 192;
+                        outerpageTable[k].pageIndex = 128;
                         break;
                     }
                 case 3:
                     {
-                        outerpageTable[k].pageIndex = 64;
+                        outerpageTable[k].pageIndex = 192;
                         break;
                     }
                 default:
@@ -102,7 +102,7 @@ void do_init()
 				break;
 		}
 		/* 设置该页对应的辅存地址 */
-		pageTable[k][i].auxAddr = outerpageTable[k].pageIndex+i*PAGE_SIZE*2;
+		pageTable[k][i].auxAddr = outerpageTable[k].pageIndex+i*PAGE_SIZE;
 		printf("%u",pageTable[k][i].auxAddr);
 	}
 	for (j = 0; j < BLOCK_SUM; j++)
@@ -380,6 +380,8 @@ void do_error(ERROR_CODE code)
 /* 产生访存请求 */
 void do_request()
 {
+    /* 随机产生请求进程号*/
+    ptr_memAccReq->proccessNum = rand()%2;
 	/* 随机产生请求地址 */
 	ptr_memAccReq->virAddr = rand() % VIRTUAL_MEMORY_SIZE;
 	/* 随机产生请求类型 */
@@ -388,7 +390,7 @@ void do_request()
 		case 0: //读请求
 		{
 			ptr_memAccReq->reqType = REQUEST_READ;
-			printf("产生请求：\n地址：%u\t类型：读取\n", ptr_memAccReq->virAddr);
+			printf("产生请求：\n进程号：%u\t地址：%u\t类型：读取\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr);
 			break;
 		}
 		case 1: //写请求
@@ -396,13 +398,13 @@ void do_request()
 			ptr_memAccReq->reqType = REQUEST_WRITE;
 			/* 随机产生待写入的值 */
 			ptr_memAccReq->value = rand() % 0xFFu;
-			printf("产生请求：\n地址：%u\t类型：写入\t值：%02X\n", ptr_memAccReq->virAddr, ptr_memAccReq->value);
+			printf("产生请求：\n进程号：%u\t地址：%u\t类型：写入\t值：%02X\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr, ptr_memAccReq->value);
 			break;
 		}
 		case 2:
 		{
 			ptr_memAccReq->reqType = REQUEST_EXECUTE;
-			printf("产生请求：\n地址：%u\t类型：执行\n", ptr_memAccReq->virAddr);
+			printf("产生请求：\n进程号：%u\t地址：%u\t类型：执行\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr);
 			break;
 		}
 		default:
@@ -485,6 +487,10 @@ int main(int argc, char* argv[])
 	    scanf("%d",&i);
 	    if(i==1)
         {
+            printf("请输入请求进程号:");
+            int pronum;
+            scanf("%d",&pronum);
+            ptr_memAccReq->proccessNum = pronum;
             printf("请输入请求地址:");
             int address;
             scanf("%d",&address);
@@ -497,7 +503,7 @@ int main(int argc, char* argv[])
 		case 0: //读请求
 		{
 			ptr_memAccReq->reqType = REQUEST_READ;
-			printf("产生请求：\n地址：%u\t类型：读取\n", ptr_memAccReq->virAddr);
+			printf("产生请求：\n进程号：%u\t地址：%u\t类型：读取\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr);
 			break;
 		}
 		case 1: //写请求
@@ -507,13 +513,13 @@ int main(int argc, char* argv[])
 			int key;
 			scanf("%d",&key);
 			ptr_memAccReq->value = key % 0xFFu;
-			printf("产生请求：\n地址：%u\t类型：写入\t值：%02X\n", ptr_memAccReq->virAddr, ptr_memAccReq->value);
+			printf("产生请求：\n进程号：%u\t地址：%u\t类型：写入\t值：%02X\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr, ptr_memAccReq->value);
 			break;
 		}
 		case 2:
 		{
 			ptr_memAccReq->reqType = REQUEST_EXECUTE;
-			printf("产生请求：\n地址：%u\t类型：执行\n", ptr_memAccReq->virAddr);
+			printf("产生请求：\n进程号：%u\t地址：%u\t类型：执行\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr);
 			break;
 		}
 		default:
