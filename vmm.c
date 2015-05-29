@@ -396,22 +396,22 @@ void do_error(ERROR_CODE code)
 		}
 		case ERROR_FIFO_REMOVE_FAILED:
 		{
-			printf("111系统错误：FIFO文件移出失败\n");
+			printf("系统错误：FIFO文件移出失败\n");
 			break;
 		}
 		case ERROR_FIFO_MAKE_FAILED:
 		{
-			printf("222系统错误：FIFO文件创建失败\n");
+			printf("系统错误：FIFO文件创建失败\n");
 			break;
 		}
 		case ERROR_FIFO_OPEN_FAILED:
 		{
-			printf("333系统错误：FIFO文件打开失败\n");
+			printf("系统错误：FIFO文件打开失败\n");
 			break;
 		}
 		case ERROR_FIFO_READ_FAILED:
 		{
-			printf("444系统错误：FIFO文件读取失败\n");
+			printf("系统错误：FIFO文件读取失败\n");
 			break;
 		}
 		default:
@@ -538,8 +538,12 @@ int main(int argc, char* argv[])
                     	fprintf(stdout,"%s",str);
                     	printf("\n");
                     	printf("实存内容：");
-                    	for(j=0;j<128;j++)
-                    	printf("%c",actMem[j]);
+			for(j=0;j<128;j++)
+			{
+				if(j%4==0)
+					printf("\n%2d\t",j/4+1);
+                    		printf("%c",actMem[j]==0?' ':actMem[j]);
+			}
                     	printf("\n");
 		}
 		else if(c=='1'||c=='2')

@@ -113,8 +113,8 @@ void do_response();
 /* 处理缺页中断 */
 void do_page_fault(Ptr_PageTableItem);
 
-/* LFU页面替换 */
-void do_LFU(Ptr_PageTableItem);
+/* LRU页面替换 */
+void do_LRU(Ptr_PageTableItem);
 
 /* 装入页面 */
 void do_page_in(Ptr_PageTableItem, unsigned in);
