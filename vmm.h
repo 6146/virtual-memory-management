@@ -38,12 +38,16 @@ typedef enum {
 	TRUE = 1, FALSE = 0
 } BOOL;
 
+typedef struct{
+    unsigned int pageNum;//一级页表的页号
+    unsigned int pageIndex;//存储二级页表项的首地址
+}OuterPageTableItem,*Ptr_OuterPageTableItem;
 
 
 /* 页表项 */
 typedef struct
 {
-	unsigned int pageNum;
+	unsigned int pageNum;//页号
 	unsigned int blockNum; //物理块号
 	BOOL filled; //页面装入特征位
 	BYTE proType; //页面保护类型
