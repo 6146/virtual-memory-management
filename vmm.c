@@ -486,7 +486,6 @@ int main(int argc, char* argv[])
 {
     char str[2000]={0};
 	char c;
-	int i,j;
 	FILE *fp;
     initFile();
 	if (!(ptr_auxMem = fopen(AUXILIARY_MEMORY, "r+")))
@@ -500,6 +499,7 @@ int main(int argc, char* argv[])
 	/* 在循环中模拟访存请求与处理过程 */
 	while (TRUE)
 	{
+		int i=0,j=0;
 	    printf("输入1手动输入请求，输入2自动生成请求\n");
 	    scanf("%d",&i);
 	    if(i==1)
@@ -515,65 +515,62 @@ int main(int argc, char* argv[])
             printf("请输入请求类型(0.读请求；1.写请求；2.执行请求):");
             int type;
             scanf("%d",&type);
-        switch (type % 3)
-	{
-		case 0: //读请求
-		{
-			ptr_memAccReq->reqType = REQUEST_READ;
-			printf("产生请求：\n进程号：%u\t地址：%u\t类型：读取\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr);
-			break;
-		}
-		case 1: //写请求
-		{
-			ptr_memAccReq->reqType = REQUEST_WRITE;
-			printf("请输入待写入的值:");
-			int key;
-			scanf("%d",&key);
-			ptr_memAccReq->value = key % 0xFFu;
-			printf("产生请求：\n进程号：%u\t地址：%u\t类型：写入\t值：%02X\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr, ptr_memAccReq->value);
-			break;
-		}
-		case 2:
-		{
-			ptr_memAccReq->reqType = REQUEST_EXECUTE;
-			printf("产生请求：\n进程号：%u\t地址：%u\t类型：执行\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr);
-			break;
-		}
-		default:
-			break;
-	}
-            //do_request();
-        }
+	        switch (type % 3)
+			{
+				case 0: //读请求
+				{
+					ptr_memAccReq->reqType = REQUEST_READ;
+					printf("产生请求：\n进程号：%u\t地址：%u\t类型：读取\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr);
+					break;
+				}
+				case 1: //写请求
+				{
+					ptr_memAccReq->reqType = REQUEST_WRITE;
+					printf("请输入待写入的值:");
+					int key;
+					scanf("%d",&key);
+					ptr_memAccReq->value = key % 0xFFu;
+					printf("产生请求：\n进程号：%u\t地址：%u\t类型：写入\t值：%02X\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr, ptr_memAccReq->value);
+					break;
+				}
+				case 2:
+				{
+					ptr_memAccReq->reqType = REQUEST_EXECUTE;
+					printf("产生请求：\n进程号：%u\t地址：%u\t类型：执行\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr);
+					break;
+				}
+				default:
+					break;
+			}
+	            //do_request();
+	      }
 		else if(i==2)
             do_request();
         else
-           {
+       	{
             printf("输入错误");
             return 0;
-           }
+     	}
 		do_response();
 		printf("按Y打印页表、辅存和实存内容，按其他键不打印...\n");
-		c=getchar();
+		while((c = getchar()) != '\n' && c != EOF);
 		if ((c=getchar()) == 'y' || c == 'Y')
-			    {
-                    do_print_info();
-                    fp=fopen(AUXILIARY_MEMORY, "r+");
-                    fscanf(fp, "%s", str);
-                    printf("辅存内容：");
-                    fprintf(stdout,"%s",str);
-                    printf("\n");
-                    printf("实存内容：");
-                    for(j=0;j<128;j++)
-                    printf("%c",actMem[j]);
-                    printf("\n");
-			    }
-		while (c != '\n')
-			c = getchar();
+	    {
+            do_print_info();
+            fp=fopen(AUXILIARY_MEMORY, "r+");
+            fscanf(fp, "%s", str);
+            printf("辅存内容：");
+            fprintf(stdout,"%s",str);
+            printf("\n");
+            printf("实存内容：");
+            for(j=0;j<128;j++)
+            printf("%c",actMem[j]);
+            printf("\n");
+	    }
 		printf("按X退出程序，按其他键继续...\n");
+		while((c = getchar()) != '\n' && c != EOF);
 		if ((c = getchar()) == 'x' || c == 'X')
 			break;
-		while (c != '\n')
-			c = getchar();
 		//sleep(5000);
 	}
 
