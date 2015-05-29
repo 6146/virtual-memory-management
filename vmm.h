@@ -34,10 +34,7 @@
 /* 定义字节类型 */
 #define BYTE unsigned char
 
-typedef struct{
-    char c;
-    MemoryAccessRequest
-}
+
 typedef enum {
 	TRUE = 1, FALSE = 0
 } BOOL;
@@ -91,7 +88,10 @@ typedef enum {
 	ERROR_FILE_READ_FAILED, //文件读取失败
 	ERROR_FILE_WRITE_FAILED //文件写入失败
 } ERROR_CODE;
-
+typedef struct{
+    char c;
+    MemoryAccessRequest memAccReq;
+} command,*Ptr_command;
 /* 产生访存请求 */
 void do_request();
 
