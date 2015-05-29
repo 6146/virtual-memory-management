@@ -389,22 +389,22 @@ void do_error(ERROR_CODE code)
 		}
 		case ERROR_FIFO_REMOVE_FAILED:
 		{
-			printf("系统错误：FIFO文件移出失败\n");
+			printf("111系统错误：FIFO文件移出失败\n");
 			break;
 		}
 		case ERROR_FIFO_MAKE_FAILED:
 		{
-			printf("系统错误：FIFO文件创建失败\n");
+			printf("222系统错误：FIFO文件创建失败\n");
 			break;
 		}
 		case ERROR_FIFO_OPEN_FAILED:
 		{
-			printf("系统错误：FIFO文件打开失败\n");
+			printf("333系统错误：FIFO文件打开失败\n");
 			break;
 		}
 		case ERROR_FIFO_READ_FAILED:
 		{
-			printf("系统错误：FIFO文件读取失败\n");
+			printf("444系统错误：FIFO文件读取失败\n");
 			break;
 		}
 		default:
@@ -501,7 +501,7 @@ int main(int argc, char* argv[])
 		exit(1);
 	}
 	
-	if((fifo = open(FIFO_FILE,O_WRONLY | O_NONBLOCK))<0)
+	if((fifo = open(FIFO_FILE,O_RDONLY))<0)
 	{
 		do_error(ERROR_FIFO_OPEN_FAILED);
 		exit(1);

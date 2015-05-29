@@ -7,17 +7,18 @@
 #include <sys/ipc.h>
 #include <fcntl.h>
 #include "vmm.h"
-#define FIFO_FILE //在此处定义FIFO文件的目录
+#define FIFO_FILE  "FIFO"//在此处定义FIFO文件的目录 
 command order;
-Ptr_MemoryAccessRequest ptr_memAccReq = (Ptr_MemoryAccessRequest) malloc(sizeof(order.MemoryAccessRequest));
+Ptr_MemoryAccessRequest ptr_memAccReq =  &(order.memAccReq);
 
 int main()
 {
+
 	int fd;
 	char c;
 	while (TRUE)
 	{
-		bzero(&command,LEN);
+		bzero(&order,LEN);
 		printf("输入1手动输入请求，输入2自动生成请求,按Y打印页表、辅存和实存内容，按其他键不打印,按按X退出程序...\n");
 		scanf("%c",&c);
 		if(c=='1')
@@ -67,6 +68,8 @@ int main()
 		{
 			order.c = c ;
 		}
+		else if(c=='X'||c=='x')
+			order.c = c ;
 		
 		if((fd = open(FIFO_FILE,O_WRONLY)) < 0)
 		{

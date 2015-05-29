@@ -13,7 +13,7 @@
 
 /* 模拟辅存的文件路径 */
 #define AUXILIARY_MEMORY "vmm_auxMem"
-
+#define FIFO_FILE  "FIFO"
 /* 页面大小（字节）*/
 #define PAGE_SIZE 4
 /* 虚存空间大小（字节） */
@@ -90,7 +90,12 @@ typedef enum {
 	ERROR_FILE_CLOSE_FAILED, //文件关闭失败
 	ERROR_FILE_SEEK_FAILED, //文件指针定位失败
 	ERROR_FILE_READ_FAILED, //文件读取失败
-	ERROR_FILE_WRITE_FAILED //文件写入失败
+	ERROR_FILE_WRITE_FAILED, //文件写入失败
+	ERROR_FIFO_REMOVE_FAILED,
+	ERROR_FIFO_MAKE_FAILED,
+	ERROR_FIFO_OPEN_FAILED,
+	ERROR_FIFO_READ_FAILED
+	
 } ERROR_CODE;
 typedef struct{
     char c;
