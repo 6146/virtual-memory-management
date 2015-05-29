@@ -11,31 +11,31 @@
 //#undef DEBUG
 
 
-/* Ä£Äâ¸¨´æµÄÎÄ¼şÂ·¾¶ */
+/* æ¨¡æ‹Ÿè¾…å­˜çš„æ–‡ä»¶è·¯å¾„ */
 #define AUXILIARY_MEMORY "vmm_auxMem"
 #define FIFO_FILE  "FIFO"
-/* Ò³Ãæ´óĞ¡£¨×Ö½Ú£©*/
+/* é¡µé¢å¤§å°ï¼ˆå­—èŠ‚ï¼‰*/
 #define PAGE_SIZE 4
-/* Ğé´æ¿Õ¼ä´óĞ¡£¨×Ö½Ú£© */
+/* è™šå­˜ç©ºé—´å¤§å°ï¼ˆå­—èŠ‚ï¼‰ */
 #define VIRTUAL_MEMORY_SIZE (64 * 4)
-/* Êµ´æ¿Õ¼ä´óĞ¡£¨×Ö½Ú£© */
+/* å®å­˜ç©ºé—´å¤§å°ï¼ˆå­—èŠ‚ï¼‰ */
 #define ACTUAL_MEMORY_SIZE (32 * 4)
-/* ×ÜĞéÒ³Êı */
+/* æ€»è™šé¡µæ•° */
 #define PAGE_SUM (VIRTUAL_MEMORY_SIZE / PAGE_SIZE)
-/* ×ÜÎïÀí¿éÊı */
+/* æ€»ç‰©ç†å—æ•° */
 #define BLOCK_SUM (ACTUAL_MEMORY_SIZE / PAGE_SIZE)
 
 
-/* ¿É¶Á±êÊ¶Î» */
+/* å¯è¯»æ ‡è¯†ä½ */
 #define READABLE 0x01u
-/* ¿ÉĞ´±êÊ¶Î» */
+/* å¯å†™æ ‡è¯†ä½ */
 #define WRITABLE 0x02u
-/* ¿ÉÖ´ĞĞ±êÊ¶Î» */
+/* å¯æ‰§è¡Œæ ‡è¯†ä½ */
 #define EXECUTABLE 0x04u
 
 
 
-/* ¶¨Òå×Ö½ÚÀàĞÍ */
+/* å®šä¹‰å­—èŠ‚ç±»å‹ */
 #define BYTE unsigned char
 
 
@@ -44,54 +44,54 @@ typedef enum {
 } BOOL;
 
 typedef struct{
-    unsigned int pageNum;//Ò»¼¶Ò³±íµÄÒ³ºÅ
-    unsigned int pageIndex;//´æ´¢¶ş¼¶Ò³±íÏîµÄÊ×µØÖ·
+    unsigned int pageNum;//ä¸€çº§é¡µè¡¨çš„é¡µå·
+    unsigned int pageIndex;//å­˜å‚¨äºŒçº§é¡µè¡¨é¡¹çš„é¦–åœ°å€
 }OuterPageTableItem,*Ptr_OuterPageTableItem;
 
 
-/* Ò³±íÏî */
+/* é¡µè¡¨é¡¹ */
 typedef struct
 {
-    unsigned int proccessNum;//½ø³ÌºÅ
-	unsigned int pageNum;//Ò³ºÅ
-	unsigned int blockNum; //ÎïÀí¿éºÅ
-	BOOL filled; //Ò³Ãæ×°ÈëÌØÕ÷Î»
-	BYTE proType; //Ò³Ãæ±£»¤ÀàĞÍ
-	BOOL edited; //Ò³ÃæĞŞ¸Ä±êÊ¶
-	BOOL visited; //Ò³Ãæ·ÃÎÊ±êÊ¶
-	unsigned long auxAddr; //Íâ´æµØÖ·
-	BYTE count; //Ò³ÃæÊ¹ÓÃ¼ÆÊıÆ÷
+    unsigned int proccessNum;//è¿›ç¨‹å·
+	unsigned int pageNum;//é¡µå·
+	unsigned int blockNum; //ç‰©ç†å—å·
+	BOOL filled; //é¡µé¢è£…å…¥ç‰¹å¾ä½
+	BYTE proType; //é¡µé¢ä¿æŠ¤ç±»å‹
+	BOOL edited; //é¡µé¢ä¿®æ”¹æ ‡è¯†
+	BOOL visited; //é¡µé¢è®¿é—®æ ‡è¯†
+	unsigned long auxAddr; //å¤–å­˜åœ°å€
+	BYTE count; //é¡µé¢ä½¿ç”¨è®¡æ•°å™¨
 } PageTableItem, *Ptr_PageTableItem;
 
-/* ·Ã´æÇëÇóÀàĞÍ */
+/* è®¿å­˜è¯·æ±‚ç±»å‹ */
 typedef enum {
 	REQUEST_READ,
 	REQUEST_WRITE,
 	REQUEST_EXECUTE
 } MemoryAccessRequestType;
 
-/* ·Ã´æÇëÇó */
+/* è®¿å­˜è¯·æ±‚ */
 typedef struct
 {
-    unsigned int proccessNum;//½ø³ÌºÅ
-	MemoryAccessRequestType reqType; //·Ã´æÇëÇóÀàĞÍ
-	unsigned long virAddr; //ĞéµØÖ·
-	BYTE value; //Ğ´ÇëÇóµÄÖµ
+    unsigned int proccessNum;//è¿›ç¨‹å·
+	MemoryAccessRequestType reqType; //è®¿å­˜è¯·æ±‚ç±»å‹
+	unsigned long virAddr; //è™šåœ°å€
+	BYTE value; //å†™è¯·æ±‚çš„å€¼
 } MemoryAccessRequest, *Ptr_MemoryAccessRequest;
 
 
-/* ·Ã´æ´íÎó´úÂë */
+/* è®¿å­˜é”™è¯¯ä»£ç  */
 typedef enum {
-	ERROR_READ_DENY, //¸ÃÒ³²»¿É¶Á
-	ERROR_WRITE_DENY, //¸ÃÒ³²»¿ÉĞ´
-	ERROR_EXECUTE_DENY, //¸ÃÒ³²»¿ÉÖ´ĞĞ
-	ERROR_INVALID_REQUEST, //·Ç·¨ÇëÇóÀàĞÍ
-	ERROR_OVER_BOUNDARY, //µØÖ·Ô½½ç
-	ERROR_FILE_OPEN_FAILED, //ÎÄ¼ş´ò¿ªÊ§°Ü
-	ERROR_FILE_CLOSE_FAILED, //ÎÄ¼ş¹Ø±ÕÊ§°Ü
-	ERROR_FILE_SEEK_FAILED, //ÎÄ¼şÖ¸Õë¶¨Î»Ê§°Ü
-	ERROR_FILE_READ_FAILED, //ÎÄ¼ş¶ÁÈ¡Ê§°Ü
-	ERROR_FILE_WRITE_FAILED, //ÎÄ¼şĞ´ÈëÊ§°Ü
+	ERROR_READ_DENY, //è¯¥é¡µä¸å¯è¯»
+	ERROR_WRITE_DENY, //è¯¥é¡µä¸å¯å†™
+	ERROR_EXECUTE_DENY, //è¯¥é¡µä¸å¯æ‰§è¡Œ
+	ERROR_INVALID_REQUEST, //éæ³•è¯·æ±‚ç±»å‹
+	ERROR_OVER_BOUNDARY, //åœ°å€è¶Šç•Œ
+	ERROR_FILE_OPEN_FAILED, //æ–‡ä»¶æ‰“å¼€å¤±è´¥
+	ERROR_FILE_CLOSE_FAILED, //æ–‡ä»¶å…³é—­å¤±è´¥
+	ERROR_FILE_SEEK_FAILED, //æ–‡ä»¶æŒ‡é’ˆå®šä½å¤±è´¥
+	ERROR_FILE_READ_FAILED, //æ–‡ä»¶è¯»å–å¤±è´¥
+	ERROR_FILE_WRITE_FAILED, //æ–‡ä»¶å†™å…¥å¤±è´¥
 	ERROR_FIFO_REMOVE_FAILED,
 	ERROR_FIFO_MAKE_FAILED,
 	ERROR_FIFO_OPEN_FAILED,
@@ -102,33 +102,33 @@ typedef struct{
     char c;
     MemoryAccessRequest memAccReq;
 } command,*Ptr_command;
-/* ¶¨ÒåÃ¿´Î´ÓFIFO¶ÁÈë×Ö³¤¶È */
+/* å®šä¹‰æ¯æ¬¡ä»FIFOè¯»å…¥å­—é•¿åº¦ */
 #define LEN sizeof(command)
-/* ²úÉú·Ã´æÇëÇó */
+/* äº§ç”Ÿè®¿å­˜è¯·æ±‚ */
 void do_request();
 
-/* ÏìÓ¦·Ã´æÇëÇó */
+/* å“åº”è®¿å­˜è¯·æ±‚ */
 void do_response();
 
-/* ´¦ÀíÈ±Ò³ÖĞ¶Ï */
+/* å¤„ç†ç¼ºé¡µä¸­æ–­ */
 void do_page_fault(Ptr_PageTableItem);
 
-/* LRUÒ³ÃæÌæ»» */
+/* LRUé¡µé¢æ›¿æ¢ */
 void do_LRU(Ptr_PageTableItem);
 
-/* ×°ÈëÒ³Ãæ */
+/* è£…å…¥é¡µé¢ */
 void do_page_in(Ptr_PageTableItem, unsigned in);
 
-/* Ğ´³öÒ³Ãæ */
+/* å†™å‡ºé¡µé¢ */
 void do_page_out(Ptr_PageTableItem);
 
-/* ´íÎó´¦Àí */
+/* é”™è¯¯å¤„ç† */
 void do_error(ERROR_CODE);
 
-/* ´òÓ¡Ò³±íÏà¹ØĞÅÏ¢ */
+/* æ‰“å°é¡µè¡¨ç›¸å…³ä¿¡æ¯ */
 void do_print_info();
 
-/* »ñÈ¡Ò³Ãæ±£»¤ÀàĞÍ×Ö·û´® */
+/* è·å–é¡µé¢ä¿æŠ¤ç±»å‹å­—ç¬¦ä¸² */
 char *get_proType_str(char *, BYTE);
 
 
