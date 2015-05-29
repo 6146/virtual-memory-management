@@ -58,8 +58,9 @@ typedef struct
 	BOOL filled; //页面装入特征位
 	BYTE proType; //页面保护类型
 	BOOL edited; //页面修改标识
+	BOOL visited; //页面访问标识
 	unsigned long auxAddr; //外存地址
-	unsigned long count; //页面使用计数器
+	BYTE count; //页面使用计数器
 } PageTableItem, *Ptr_PageTableItem;
 
 /* 访存请求类型 */
@@ -95,7 +96,7 @@ typedef enum {
 	ERROR_FIFO_MAKE_FAILED,
 	ERROR_FIFO_OPEN_FAILED,
 	ERROR_FIFO_READ_FAILED
-	
+
 } ERROR_CODE;
 typedef struct{
     char c;

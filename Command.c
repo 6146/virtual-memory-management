@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -27,7 +28,7 @@ int main()
 			printf("请输入请求进程号:");
 			scanf("%d",&ptr_memAccReq->proccessNum);
 			printf("请输入请求地址:");
-			scanf("%d",&ptr_memAccReq->virAddr);
+			scanf("%lu",&ptr_memAccReq->virAddr);
 			printf("请输入请求类型(0.读请求；1.写请求；2.执行请求):");
 			int type;
             		scanf("%d",&type);
@@ -36,7 +37,7 @@ int main()
 				case 0: //读请求
 				{
 					ptr_memAccReq->reqType = REQUEST_READ;
-					printf("产生请求：\n进程号：%u\t地址：%u\t类型：读取\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr);
+					printf("产生请求：\n进程号：%u\t地址：%lu\t类型：读取\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr);
 					break;
 				}
 				case 1: //写请求
@@ -46,13 +47,13 @@ int main()
 					int key;
 					scanf("%d",&key);
 					ptr_memAccReq->value = key % 0xFFu;
-					printf("产生请求：\n进程号：%u\t地址：%u\t类型：写入\t值：%02X\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr, ptr_memAccReq->value);
+					printf("产生请求：\n进程号：%u\t地址：%lu\t类型：写入\t值：%02X\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr, ptr_memAccReq->value);
 					break;
 				}
 				case 2:
 				{
 					ptr_memAccReq->reqType = REQUEST_EXECUTE;
-					printf("产生请求：\n进程号：%u\t地址：%u\t类型：执行\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr);
+					printf("产生请求：\n进程号：%u\t地址：%lu\t类型：执行\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr);
 					break;
 				}
 				default:
@@ -100,7 +101,7 @@ void do_request()
 		case 0: //读请求
 		{
 			ptr_memAccReq->reqType = REQUEST_READ;
-			printf("产生请求：\n进程号：%u\t地址：%u\t类型：读取\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr);
+			printf("产生请求：\n进程号：%u\t地址：%lu\t类型：读取\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr);
 			break;
 		}
 		case 1: //写请求
@@ -108,13 +109,13 @@ void do_request()
 			ptr_memAccReq->reqType = REQUEST_WRITE;
 			/* 随机产生待写入的值 */
 			ptr_memAccReq->value = rand() % 0xFFu;
-			printf("产生请求：\n进程号：%u\t地址：%u\t类型：写入\t值：%02X\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr, ptr_memAccReq->value);
+			printf("产生请求：\n进程号：%u\t地址：%lu\t类型：写入\t值：%02X\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr, ptr_memAccReq->value);
 			break;
 		}
 		case 2:
 		{
 			ptr_memAccReq->reqType = REQUEST_EXECUTE;
-			printf("产生请求：\n进程号：%u\t地址：%u\t类型：执行\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr);
+			printf("产生请求：\n进程号：%u\t地址：%lu\t类型：执行\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr);
 			break;
 		}
 		default:
