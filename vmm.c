@@ -21,7 +21,7 @@ Ptr_MemoryAccessRequest ptr_memAccReq;
 /* 初始化环境 */
 void do_init()
 {
-	int i, j,k,m,n,l=0;
+	int i, j,k,l;
 	srand(time(NULL));
 	for (k = 0; k < 4;k++)
         {
@@ -103,20 +103,8 @@ void do_init()
 		}
 		/* 设置该页对应的辅存地址 */
 		pageTable[k][i].auxAddr = outerpageTable[k].pageIndex+i*PAGE_SIZE;
+		printf("%u",pageTable[k][i].auxAddr);
 	}
-	/* 随机设置进程号*/
-	for (m = 0;m<4;m++)
-        for(n=0;n<16;n++)
-    {
-      if(l<32)
-      {
-          pageTable[m][n].proccessNum=0;
-          l++;
-      }
-      else
-             pageTable[m][n].proccessNum=1;
-
-    }
 	for (j = 0; j < BLOCK_SUM; j++)
 	{
 		/* 随机选择一些物理块进行页面装入 */
@@ -155,12 +143,7 @@ void do_response()
 
 	/* 获取对应页表项 */
 	ptr_pageTabIt = &pageTable[pageCat][pageNum];
-    /* 检查进程号是否匹配 */
-    if(ptr_memAccReq->proccessNum!=ptr_pageTabIt->proccessNum)
-    {
-        printf("进程号不匹配，操作不符合权限\n");
-        return;
-    }
+
 	/* 根据特征位决定是否产生缺页中断 */
 	if (!ptr_pageTabIt->filled)
 	{
@@ -434,10 +417,10 @@ void do_print_info()
 {
 	unsigned int i, j, k;
 	char str[4];
-	printf("页目录\t页号\t进程号\t块号\t装入\t修改\t保护\t计数\t辅存\n");
+	printf("页目录\t页号\t块号\t装入\t修改\t保护\t计数\t辅存\n");
 	for (i = 0; i < PAGE_SUM; i++)
 	{
-		printf("%u\t%u\t%u\t%u\t%u\t%u\t%s\t%u\t%u\n", i/16,i%16,pageTable[i/16][i%16].proccessNum, pageTable[i/16][i%16].blockNum, pageTable[i/16][i%16].filled,
+		printf("%u\t%u\t%u\t%u\t%u\t%s\t%u\t%u\n", i/16,i%16, pageTable[i/16][i%16].blockNum, pageTable[i/16][i%16].filled,
 			pageTable[i/16][i%16].edited, get_proType_str(str, pageTable[i/16][i%16].proType),
 			pageTable[i/16][i%16].count, pageTable[i/16][i%16].auxAddr);
 	}
@@ -511,7 +494,7 @@ int main(int argc, char* argv[])
             printf("请输入请求地址:");
             int address;
             scanf("%d",&address);
-            ptr_memAccReq->virAddr = address ;
+            ptr_memAccReq->virAddr = address % VIRTUAL_MEMORY_SIZE;
             printf("请输入请求类型(0.读请求；1.写请求；2.执行请求):");
             int type;
             scanf("%d",&type);
