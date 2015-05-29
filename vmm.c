@@ -15,7 +15,8 @@ FILE *ptr_auxMem;
 BOOL blockStatus[BLOCK_SUM];
 /* 访存请求 */
 Ptr_MemoryAccessRequest ptr_memAccReq;
-
+/* FIFO */
+int fifo = 0;
 
 
 /* 初始化环境 */
@@ -29,107 +30,106 @@ void do_init()
                 switch(k)
                 {
                 case 0:
-                    {
+			{
                         outerpageTable[k].pageIndex = 0;
                         break;
-                    }
+	               	}
                 case 1:
-                    {
+                    	{
                         outerpageTable[k].pageIndex = 64;
                         break;
-                    }
+                    	}
                 case 2:
-                    {
+                    	{
                         outerpageTable[k].pageIndex = 128;
                         break;
-                    }
+                    	}
                 case 3:
-                    {
+                    	{
                         outerpageTable[k].pageIndex = 192;
                         break;
-                    }
+                    	}
                 default:
                     break;
                 }
 
         }
-    for(k=0;k<4;k++)
-	for (i = 0; i < 16; i++)
-	{
-		pageTable[k][i].pageNum = k*16+i;
-		pageTable[k][i].filled = FALSE;
-		pageTable[k][i].edited = FALSE;
-		pageTable[k][i].count = 0;
-		/* 使用随机数设置该页的保护类型 */
-		switch (rand() % 7)
+    	for(k=0;k<4;k++)
+		for (i = 0; i < 16; i++)
 		{
-			case 0:
+			pageTable[k][i].pageNum = k*16+i;
+			pageTable[k][i].filled = FALSE;
+			pageTable[k][i].edited = FALSE;
+			pageTable[k][i].count = 0;
+		/* 使用随机数设置该页的保护类型 */
+			switch (rand() % 7)
 			{
-				pageTable[k][i].proType = READABLE;
-				break;
-			}
-			case 1:
-			{
-				pageTable[k][i].proType = WRITABLE;
-				break;
-			}
-			case 2:
-			{
-				pageTable[k][i].proType = EXECUTABLE;
-				break;
-			}
-			case 3:
-			{
-				pageTable[k][i].proType = READABLE | WRITABLE;
-				break;
-			}
-			case 4:
-			{
-				pageTable[k][i].proType = READABLE | EXECUTABLE;
-				break;
-			}
-			case 5:
-			{
-				pageTable[k][i].proType = WRITABLE | EXECUTABLE;
-				break;
-			}
-			case 6:
-			{
-				pageTable[k][i].proType = READABLE | WRITABLE | EXECUTABLE;
-				break;
-			}
-			default:
-				break;
+				case 0:
+					{
+						pageTable[k][i].proType = READABLE;
+						break;
+					}
+				case 1:
+					{
+						pageTable[k][i].proType = WRITABLE;
+						break;
+					}
+				case 2:
+					{
+						pageTable[k][i].proType = EXECUTABLE;
+						break;
+					}
+				case 3:
+					{
+						pageTable[k][i].proType = READABLE | WRITABLE;
+						break;
+					}
+				case 4:
+					{
+						pageTable[k][i].proType = READABLE | EXECUTABLE;
+						break;
+					}
+				case 5:
+					{
+						pageTable[k][i].proType = WRITABLE | EXECUTABLE;
+						break;
+					}
+				case 6:
+					{
+						pageTable[k][i].proType = READABLE | WRITABLE | EXECUTABLE;
+						break;
+					}
+				default:
+						break;
 		}
 		/* 设置该页对应的辅存地址 */
 		pageTable[k][i].auxAddr = outerpageTable[k].pageIndex+i*PAGE_SIZE;
 	}
 	/* 随机设置进程号*/
 	for (m = 0;m<4;m++)
-        for(n=0;n<16;n++)
-    {
-      if(l<32)
-      {
-          pageTable[m][n].proccessNum=0;
-          l++;
-      }
-      else
-             pageTable[m][n].proccessNum=1;
-
-    }
-	for (j = 0; j < BLOCK_SUM; j++)
-	{
-		/* 随机选择一些物理块进行页面装入 */
-		if (rand() % 2 == 0)
+        	for(n=0;n<16;n++)
+    		{
+      			if(l<32)
+      			{
+          			pageTable[m][n].proccessNum=0;
+          			l++;
+      			}
+      			else
+             			pageTable[m][n].proccessNum=1;
+    		}
+		for (j = 0; j < BLOCK_SUM; j++)
 		{
-			do_page_in(&pageTable[j/16][j%16], j);
-			pageTable[j/16][j%16].blockNum = j;
-			pageTable[j/16][j%16].filled = TRUE;
-			blockStatus[j] = TRUE;
+			/* 随机选择一些物理块进行页面装入 */
+			if (rand() % 2 == 0)
+			{
+				do_page_in(&pageTable[j/16][j%16], j);
+				pageTable[j/16][j%16].blockNum = j;
+				pageTable[j/16][j%16].filled = TRUE;
+				blockStatus[j] = TRUE;
+			}
+			else
+				blockStatus[j] = FALSE;
 		}
-		else
-			blockStatus[j] = FALSE;
-	}
 }
 
 
@@ -156,11 +156,11 @@ void do_response()
 	/* 获取对应页表项 */
 	ptr_pageTabIt = &pageTable[pageCat][pageNum];
     /* 检查进程号是否匹配 */
-    if(ptr_memAccReq->proccessNum!=ptr_pageTabIt->proccessNum)
-    {
-        printf("进程号不匹配，操作不符合权限\n");
-        return;
-    }
+    	if(ptr_memAccReq->proccessNum!=ptr_pageTabIt->proccessNum)
+    	{
+        	printf("进程号不匹配，操作不符合权限\n");
+        	return;
+    	}
 	/* 根据特征位决定是否产生缺页中断 */
 	if (!ptr_pageTabIt->filled)
 	{
@@ -387,6 +387,26 @@ void do_error(ERROR_CODE code)
 			printf("系统错误：写入文件失败\n");
 			break;
 		}
+		case ERROR_FIFO_REMOVE_FAILED:
+		{
+			printf("系统错误：FIFO文件移出失败\n");
+			break;
+		}
+		case ERROR_FIFO_MAKE_FAILED:
+		{
+			printf("系统错误：FIFO文件创建失败\n");
+			break;
+		}
+		case ERROR_FIFO_OPEN_FAILED:
+		{
+			printf("系统错误：FIFO文件打开失败\n");
+			break;
+		}
+		case ERROR_FIFO_READ_FAILED:
+		{
+			printf("系统错误：FIFO文件读取失败\n");
+			break;
+		}
 		default:
 		{
 			printf("未知错误：没有这个错误代码\n");
@@ -394,40 +414,6 @@ void do_error(ERROR_CODE code)
 	}
 }
 
-/* 产生访存请求 */
-void do_request()
-{
-    /* 随机产生请求进程号*/
-    ptr_memAccReq->proccessNum = rand()%2;
-	/* 随机产生请求地址 */
-	ptr_memAccReq->virAddr = rand() % VIRTUAL_MEMORY_SIZE;
-	/* 随机产生请求类型 */
-	switch (rand() % 3)
-	{
-		case 0: //读请求
-		{
-			ptr_memAccReq->reqType = REQUEST_READ;
-			printf("产生请求：\n进程号：%u\t地址：%u\t类型：读取\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr);
-			break;
-		}
-		case 1: //写请求
-		{
-			ptr_memAccReq->reqType = REQUEST_WRITE;
-			/* 随机产生待写入的值 */
-			ptr_memAccReq->value = rand() % 0xFFu;
-			printf("产生请求：\n进程号：%u\t地址：%u\t类型：写入\t值：%02X\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr, ptr_memAccReq->value);
-			break;
-		}
-		case 2:
-		{
-			ptr_memAccReq->reqType = REQUEST_EXECUTE;
-			printf("产生请求：\n进程号：%u\t地址：%u\t类型：执行\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr);
-			break;
-		}
-		default:
-			break;
-	}
-}
 
 /* 打印页表 */
 void do_print_info()
@@ -463,32 +449,35 @@ char *get_proType_str(char *str, BYTE type)
 }
 void initFile()
 {
-    int i;
-    char* key="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    char buffer[1000];
+    	int i;
+    	char* key="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    	char buffer[1000];
 
 
-    ptr_auxMem=fopen(AUXILIARY_MEMORY,"w+");
-    for(i=0;i<1000;i++)
-    {
-        buffer[i] = key[rand()%62];
-    }
-    buffer[1000] = '\0';
-    //随机生成256位字符串
-    fwrite(buffer,sizeof(BYTE),1000,ptr_auxMem);
-    /*
-    size_t fwrite(const void* buffer,size_t size,size_t count, FILE* stream)
-    */
-    printf("系统提示：初始化辅存模拟文件完成\n");
-    fclose(ptr_auxMem);
+    	ptr_auxMem=fopen(AUXILIARY_MEMORY,"w+");
+    	for(i=0;i<1000;i++)
+    	{
+        	buffer[i] = key[rand()%62];
+    	}
+    	buffer[1000] = '\0';
+    	//随机生成256位字符串
+    	fwrite(buffer,sizeof(BYTE),1000,ptr_auxMem);
+    	/*
+    	size_t fwrite(const void* buffer,size_t size,size_t count, FILE* stream)
+    	*/
+    	printf("系统提示：初始化辅存模拟文件完成\n");
+    	fclose(ptr_auxMem);
 }
 int main(int argc, char* argv[])
 {
-    char str[2000]={0};
+    	char str[2000]={0};
 	char c;
 	int i,j;
+	command order;//
+	struct stat statbuf;//
+        int num;
 	FILE *fp;
-    initFile();
+    	initFile();
 	if (!(ptr_auxMem = fopen(AUXILIARY_MEMORY, "r+")))
 	{
 		do_error(ERROR_FILE_OPEN_FAILED);
@@ -497,90 +486,64 @@ int main(int argc, char* argv[])
 	do_init();
 	do_print_info();
 	ptr_memAccReq = (Ptr_MemoryAccessRequest) malloc(sizeof(MemoryAccessRequest));
+	if(stat(FIFO_FILE,&statbuf)==0)//通过文件目录获取文件信息，保存在statbuf中
+	{
+		if(remove(FIFO_FILE)<0)
+		{
+			do_error(ERROR_FIFO_REMOVE_FAILED);
+			exit(1);
+		}
+	}
+
+	if(mkfifo(FIFO_FILE,0666)<0)
+	{
+		do_error(ERROR_FIFO_MAKE_FAILED);
+		exit(1);
+	}
+	
+	if((fifo = open(FIFO_FILE,O_WRONLY | O_NONBLOCK))<0)
+	{
+		do_error(ERROR_FIFO_OPEN_FAILED);
+		exit(1);
+	}
 	/* 在循环中模拟访存请求与处理过程 */
 	while (TRUE)
 	{
-	    printf("输入1手动输入请求，输入2自动生成请求\n");
-	    scanf("%d",&i);
-	    if(i==1)
-        {
-            printf("请输入请求进程号:");
-            int pronum;
-            scanf("%d",&pronum);
-            ptr_memAccReq->proccessNum = pronum;
-            printf("请输入请求地址:");
-            int address;
-            scanf("%d",&address);
-            ptr_memAccReq->virAddr = address ;
-            printf("请输入请求类型(0.读请求；1.写请求；2.执行请求):");
-            int type;
-            scanf("%d",&type);
-        switch (type % 3)
-	{
-		case 0: //读请求
+		bzero(&order,LEN);		
+		if((num=read(fifo,&order,LEN))<0)
 		{
-			ptr_memAccReq->reqType = REQUEST_READ;
-			printf("产生请求：\n进程号：%u\t地址：%u\t类型：读取\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr);
-			break;
+			do_error(ERROR_FIFO_READ_FAILED);
+			exit(1);
 		}
-		case 1: //写请求
+		if(num==0)
+			continue;
+		c = order.c;
+		if(c=='Y'||c=='y')
 		{
-			ptr_memAccReq->reqType = REQUEST_WRITE;
-			printf("请输入待写入的值:");
-			int key;
-			scanf("%d",&key);
-			ptr_memAccReq->value = key % 0xFFu;
-			printf("产生请求：\n进程号：%u\t地址：%u\t类型：写入\t值：%02X\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr, ptr_memAccReq->value);
-			break;
+			do_print_info();
+                    	fp=fopen(AUXILIARY_MEMORY, "r+");
+                    	fscanf(fp, "%s", str);
+                    	printf("辅存内容：");
+                    	fprintf(stdout,"%s",str);
+                    	printf("\n");
+                    	printf("实存内容：");
+                    	for(j=0;j<128;j++)
+                    	printf("%c",actMem[j]);
+                    	printf("\n");
 		}
-		case 2:
+		else if(c=='1'||c=='2')
 		{
-			ptr_memAccReq->reqType = REQUEST_EXECUTE;
-			printf("产生请求：\n进程号：%u\t地址：%u\t类型：执行\n",ptr_memAccReq->proccessNum, ptr_memAccReq->virAddr);
-			break;
+			ptr_memAccReq = &(order.memAccReq);
+			do_response();
 		}
-		default:
-			break;
+		else if(c=='x'||c=='X')
+			break;		
 	}
-            //do_request();
-        }
-		else if(i==2)
-            do_request();
-        else
-           {
-            printf("输入错误");
-            return 0;
-           }
-		do_response();
-		printf("按Y打印页表、辅存和实存内容，按其他键不打印...\n");
-		c=getchar();
-		if ((c=getchar()) == 'y' || c == 'Y')
-			    {
-                    do_print_info();
-                    fp=fopen(AUXILIARY_MEMORY, "r+");
-                    fscanf(fp, "%s", str);
-                    printf("辅存内容：");
-                    fprintf(stdout,"%s",str);
-                    printf("\n");
-                    printf("实存内容：");
-                    for(j=0;j<128;j++)
-                    printf("%c",actMem[j]);
-                    printf("\n");
-			    }
-		while (c != '\n')
-			c = getchar();
-		printf("按X退出程序，按其他键继续...\n");
-		if ((c = getchar()) == 'x' || c == 'X')
-			break;
-		while (c != '\n')
-			c = getchar();
-		//sleep(5000);
-	}
-
 	if (fclose(ptr_auxMem) == EOF)
 	{
 		do_error(ERROR_FILE_CLOSE_FAILED);
 		exit(1);
 	}
+	close(fifo);
 	return (0);
 }

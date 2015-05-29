@@ -1,3 +1,7 @@
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<fcntl.h>
+
 #ifndef VMM_H
 #define VMM_H
 
@@ -92,6 +96,8 @@ typedef struct{
     char c;
     MemoryAccessRequest memAccReq;
 } command,*Ptr_command;
+/* 定义每次从FIFO读入字长度 */
+#define LEN sizeof(command)
 /* 产生访存请求 */
 void do_request();
 
