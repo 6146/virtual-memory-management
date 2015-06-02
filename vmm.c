@@ -169,7 +169,7 @@ void do_response()
 		do_page_fault(ptr_pageTabIt);
 	}
 
-	actAddr = ptr_pageTabIt->auxAddr+offAddr;//blockNum * PAGE_SIZE + offAddr;
+	actAddr = ptr_pageTabIt->blockNum * PAGE_SIZE+offAddr;//blockNum * PAGE_SIZE + offAddr;
 	printf("实地址为：%u\n", actAddr);
 
 	/* 检查页面访问权限并处理访存请求 */
@@ -541,7 +541,7 @@ int main(int argc, char* argv[])
 			for(j=0;j<128;j++)
 			{
 				if(j%4==0)
-					printf("\n%2d\t",j/4+1);
+					printf("\n%2d\t",j/4);
                     		printf("%c",actMem[j]==0?' ':actMem[j]);
 			}
                     	printf("\n");
